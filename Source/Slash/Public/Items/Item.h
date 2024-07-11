@@ -22,5 +22,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+private:
+	float RunningTime;
+	float Amplitude = 0.25f; //진폭
+	float TimeConstant = 5.f;		//x 계수값
 };
