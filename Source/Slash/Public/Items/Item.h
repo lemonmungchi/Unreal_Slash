@@ -19,11 +19,32 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Sine Parameters")
+	float Amplitude = 0.25f; //霞ァ
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
+	float TimeConstant = 5.f;		//x 啗熱高
+
+	UFUNCTION(BlueprintPure)
+	float TransformedSin();
+
+	UFUNCTION(BlueprintPure)
+	float TransformedCosin();
+
+	template<typename T> 
+	T Avg(T First, T Second);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 private:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"));
 	float RunningTime;
-	float Amplitude = 0.25f; //霞ァ
-	float TimeConstant = 5.f;		//x 啗熱高
+
 };
+
+template<typename T>
+inline T AItem::Avg(T First, T Second)
+{
+	return (First + Second) / 2;
+}
