@@ -10,8 +10,8 @@ UCLASS()
 class SLASH_API AItem : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AItem();
 
@@ -19,11 +19,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Sine Parameters")
-	float Amplitude = 0.25f; //¡¯∆¯
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
+	float Amplitude = 0.25f; //ÏßÑÌè≠
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
-	float TimeConstant = 5.f;		//x ∞Ëºˆ∞™
+	float TimeConstant = 5.f;		//x Í≥ÑÏàòÍ∞í
 
 	UFUNCTION(BlueprintPure)
 	float TransformedSin();
@@ -31,16 +31,18 @@ protected:
 	UFUNCTION(BlueprintPure)
 	float TransformedCosin();
 
-	template<typename T> 
+	template<typename T>
 	T Avg(T First, T Second);
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 private:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"));
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"));
 	float RunningTime;
 
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* ItemMesh;
 };
 
 template<typename T>
