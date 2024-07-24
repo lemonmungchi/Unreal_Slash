@@ -1,6 +1,6 @@
 #include "Items/Item.h"
 #include "Slash/DebugMacros.h"
-
+#include "Components/SphereComponent.h"
 
 
 // Sets default values
@@ -11,12 +11,17 @@ AItem::AItem()
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
 	RootComponent = ItemMesh;
+
+	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	Sphere->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 }
 
 float AItem::TransformedSin()
@@ -27,6 +32,15 @@ float AItem::TransformedSin()
 float AItem::TransformedCosin()
 {
 	return Amplitude * FMath::Cos(RunningTime * TimeConstant);
+}
+
+void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const FString OtherActorName = OtherActor->GetName();
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Blue, OtherActorName);
+	}
 }
 
 // Called every frame
