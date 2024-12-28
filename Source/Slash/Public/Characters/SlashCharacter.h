@@ -58,13 +58,15 @@ protected:
 #pragma endregion
 
 #pragma region Montagefunctions
+
+	//애니메이션 몽타주 재생
 	void PlayAttackMontage();
 
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 	bool CanAttack();
 
-	void PlayEquipMontage(FName SectionName);
+	void PlayEquipMontage(const FName& SectionName);
 	bool CanDisarm();
 	bool CanArm();
 
