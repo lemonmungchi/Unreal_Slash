@@ -24,6 +24,11 @@ public:
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	void DirectionalHitReact(const FVector& ImpactPoint);
 private:
+
+	UPROPERTY(VisibleAnywhere)
+	class UAttributeComponent* Attributes;
+
+
 	/**
 	애니메이션 몽타주
 	*/
