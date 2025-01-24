@@ -32,6 +32,20 @@ void AEnemy::BeginPlay()
 	
 }
 
+void AEnemy::Die()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DeathMontage)
+	{
+		AnimInstance->Montage_Play(DeathMontage);
+		const int32 Selection = FMath::RandRange(1, 6);
+		FString SectionString = FString::Printf(TEXT("Death%d"), Selection); // "Death1", "Death2" 등의 문자열 생성
+		DeathPose = static_cast<EDeathPose>(Selection);
+		FName SectionName = FName(*SectionString); // FString을 FName으로 변환
+		AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
+	}
+}
+
 void AEnemy::PlayHitReactMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -56,9 +70,16 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	//DRAW_SPHERE_COLOR(ImpactPoint,FColor::Orange);
+	if (Attributes && Attributes->IsAlive())
+	{
+		DirectionalHitReact(ImpactPoint);
+	}
+	else
+	{
+		Die();
+	}
 	
-	DirectionalHitReact(ImpactPoint);
+	
 
 	if (HitSound)
 	{
