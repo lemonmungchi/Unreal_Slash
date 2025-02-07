@@ -79,6 +79,14 @@ void AEnemy::Die()
 	SetLifeSpan(3.f);
 }
 
+bool AEnemy::InTargetRange(AActor* Target, double Radius)
+{
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+	DRAW_SPHERE_SingleFrame(GetActorLocation());
+	DRAW_SPHERE_SingleFrame(Target->GetActorLocation());
+	return DistanceToTarget <= Radius;
+}
+
 void AEnemy::PlayHitReactMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -95,8 +103,7 @@ void AEnemy::Tick(float DeltaTime)
 
 	if (CombatTarget)
 	{
-		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size();
-		if (DistanceToTarget > CombatRadius)
+		if (!InTargetRange(CombatTarget,CombatRadius))
 		{
 			CombatTarget = nullptr;
 			if (HealthBarWidget)
@@ -104,6 +111,31 @@ void AEnemy::Tick(float DeltaTime)
 				HealthBarWidget->SetVisibility(false);
 				Attributes->SetHealth(100.f);
 			}
+		}
+	}
+
+	if (PatrolTarget && EnemyController)
+	{
+		TArray<AActor*> ValidTargets;
+		for (AActor* Target : PatrolTargets)
+		{
+			if (Target != PatrolTarget)
+			{
+				ValidTargets.AddUnique(Target);
+			}
+		}
+
+
+		if (InTargetRange(PatrolTarget, PatrolRadius))
+		{
+			const int32 TargetSelection = FMath::RandRange(0, ValidTargets.Num() - 1);
+			PatrolTarget = ValidTargets[TargetSelection];
+			
+			FAIMoveRequest MoveRequest;
+			MoveRequest.SetGoalActor(PatrolTarget);
+			//도착이라고 생각할 거리
+			MoveRequest.SetAcceptanceRadius(15.f);
+			EnemyController->MoveTo(MoveRequest);
 		}
 	}
 }

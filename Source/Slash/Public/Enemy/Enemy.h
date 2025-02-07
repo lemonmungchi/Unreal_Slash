@@ -50,7 +50,7 @@ private:
 	UPROPERTY()
 	AActor* CombatTarget;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	double CombatRadius = 500.f;
 
 	/**
@@ -67,10 +67,14 @@ private:
 	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
 	TArray<AActor*> PatrolTargets;
 
+	UPROPERTY(EditAnywhere)
+	double PatrolRadius = 200.f;
+
 protected:
 	virtual void BeginPlay() override;
 
 	void Die();
+	bool InTargetRange(AActor* Target,double Radius);
 
 	/**
 	애니메이션 몽타주
