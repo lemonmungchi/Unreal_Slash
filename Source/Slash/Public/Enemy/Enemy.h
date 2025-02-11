@@ -20,17 +20,28 @@ public:
 	AEnemy();
 
 	virtual void Tick(float DeltaTime) override;
+	void CheckPatrolTarget();
+	void CheckCombatTarget();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	void DirectionalHitReact(const FVector& ImpactPoint);
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 private:
 
+	/*
+	Components
+	*/
+
+
 	UPROPERTY(VisibleAnywhere)
 	class UAttributeComponent* Attributes;
 
 	UPROPERTY(VisibleAnywhere)
 	class UHealthBarComponent* HealthBarWidget;
+
+ 
+	UPROPERTY(VisibleAnywhere)
+	class UPawnSensingComponent* PawnSensing;
 
 	/**
 	애니메이션 몽타주
@@ -70,11 +81,25 @@ private:
 	UPROPERTY(EditAnywhere)
 	double PatrolRadius = 200.f;
 
+	FTimerHandle PatrolTimer;
+	void PatrolTimerFinished();
+
+	UPROPERTY(EditAnywhere,Category="AI Navigation")
+	float waitMin = 5.f;
+	UPROPERTY(EditAnywhere, Category = "AI Navigation")
+	float waitMax = 10.f;
+
+	EEnemyState EnemyState = EEnemyState::EES_Patrolling;
 protected:
 	virtual void BeginPlay() override;
 
 	void Die();
 	bool InTargetRange(AActor* Target,double Radius);
+	void MoveToTarget(AActor* Target);
+	AActor* ChoosePatrolTarget();
+
+	UFUNCTION()
+	void PawnSeen(APawn* SeenPawn);
 
 	/**
 	애니메이션 몽타주
